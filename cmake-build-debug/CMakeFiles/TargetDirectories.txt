@@ -1,0 +1,3 @@
+/Users/will/CLionProjects/AudioVisualiser/cmake-build-debug/CMakeFiles/AudioVisualiser.dir
+/Users/will/CLionProjects/AudioVisualiser/cmake-build-debug/CMakeFiles/edit_cache.dir
+/Users/will/CLionProjects/AudioVisualiser/cmake-build-debug/CMakeFiles/rebuild_cache.dir
