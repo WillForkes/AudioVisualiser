@@ -4,6 +4,7 @@
 
 #include "main.h"
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_mixer.h>
 #include <fftw3.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -12,6 +13,46 @@
 
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 600
+#define AUDIO_FREQUENCY 44100
+#define AUDIO_CHANNELS 1
+
+Mix_Chunk *audioChunk;
+Uint8 *audioPos;
+Uint32 audioLen;
+
+// Function to load the audio
+int load_audio(const char *filename) {
+    // Open the audio device
+    if (Mix_OpenAudio(AUDIO_FREQUENCY, MIX_DEFAULT_FORMAT, AUDIO_CHANNELS, 1024) < 0) {
+        printf("SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError());
+        return 1;
+    }
+
+    // Load the audio file
+    audioChunk = Mix_LoadWAV(filename);
+    if (!audioChunk) {
+        printf("Failed to load audio file! SDL_mixer Error: %s\n", Mix_GetError());
+        return 1;
+    }
+
+    // Set the audio length and position
+    audioPos = audioChunk->abuf;
+    audioLen = audioChunk->alen;
+
+    return 0;
+}
+
+// SDL audio callback function (to read the audio into a buffer)
+void audio_callback(void *userdata, Uint8 *stream, int len) {
+    // Copy the audio data into the stream
+    if (audioLen == 0) {
+        return;  // No more audio
+    }
+    len = (len > audioLen ? audioLen : len);
+    SDL_memcpy(stream, audioPos, len);
+    audioPos += len;
+    audioLen -= len;
+}
 
 int main(int argc, char* argv[]) {
     // Initialize SDL
